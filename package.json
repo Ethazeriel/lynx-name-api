@@ -1,0 +1,22 @@
+{
+  "name": "lynx-name-api",
+  "version": "1.0.0",
+  "description": "Simple service to provide computer names for use with Hybrid AzureAD Join",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Neil Merchant",
+  "license": "MIT",
+  "dependencies": {
+    "@types/express": "^4.17.14",
+    "@types/validator": "^13.7.8",
+    "@typescript-eslint/eslint-plugin": "^5.40.1",
+    "@typescript-eslint/parser": "^5.40.1",
+    "eslint": "^8.26.0",
+    "express": "^4.18.2",
+    "typescript": "^4.8.4",
+    "validator": "^13.7.0"
+  }
+}
