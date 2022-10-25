@@ -45,7 +45,7 @@ if (-not $details.CsPartOfDomain)
 
 # Make sure we have connectivity
 $dcInfo = [ADSI]"LDAP://RootDSE"
-if ($dcInfo.dnsHostName -eq $null)
+if ($null -eq $dcInfo.dnsHostName)
 {
     Write-Host "No connectivity to the domain."
     $goodToGo = $false
@@ -55,24 +55,24 @@ if ($goodToGo)
 {
     # Get the new computer name
     $lynxInfo = Get-ComputerInfo | ConvertTo-Json -Depth 5;
-    $lynxURI = "http://172.16.12.103:17346/name"
+    $lynxURI = "http://TEST-ADMIN01.corp.test.com:17346/name"
     $newName = Invoke-RestMethod -Method Post -Uri $lynxURI -Body $lynxInfo -Headers @{'content-type' = 'application/json'};
 
     # Set the computer name
-    Write-Host "Renaming computer to $($newName.name)"
-    Rename-Computer -NewName $newName.name
+    Write-Host "Renaming computer to $($newName)"
+    Rename-Computer -NewName $newName
 
     # Remove the scheduled task
     Disable-ScheduledTask -TaskName "RenameComputer" -ErrorAction Ignore
     Unregister-ScheduledTask -TaskName "RenameComputer" -Confirm:$false -ErrorAction Ignore
     Write-Host "Scheduled task unregistered."
 
-    # Make sure we reboot if still in ESP/OOBE by reporting a 1641 return code (hard reboot)
+    # Return a 3010 exit code to soft reboot if we're in OOBE
     if ($details.CsUserName -match "defaultUser")
     {
-        Write-Host "Exiting during ESP/OOBE with return code 1641"
+        Write-Host "Exiting during ESP/OOBE with return code 3010"
         Stop-Transcript
-        Exit 1641
+        Exit 3010
     }
     else {
         Write-Host "Initiating a restart in 60 seconds"
@@ -85,7 +85,7 @@ else
 {
     # Check to see if already scheduled
     $existingTask = Get-ScheduledTask -TaskName "RenameComputer" -ErrorAction SilentlyContinue
-    if ($existingTask -ne $null)
+    if ($null -eq $existingTask)
     {
         Write-Host "Scheduled task already exists."
         Stop-Transcript
