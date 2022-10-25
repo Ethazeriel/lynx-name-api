@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import express from 'express';
 import fs from 'fs';
+import { renderTime } from './util';
 
 const app = express();
 const port = 17346;
@@ -49,10 +50,10 @@ app.post('/name', async (req, res) => {
   };
   if (db.entries.some(e => e.SerialNumber === client.BiosSeralNumber)) {
     const i = db.entries.findIndex(e => e.SerialNumber === client.BiosSeralNumber);
-    console.log('we already have this:', client.BiosSeralNumber, db.entries[i].AssignedName);
+    console.log(`${renderTime()} we already have this: ${client.BiosSeralNumber} ${db.entries[i].AssignedName}`);
     res.send(db.entries[i].AssignedName);
   } else {
-    console.log(newEntry);
+    console.log(`${renderTime()} ${JSON.stringify(newEntry, null, 2)}`);
     db.entries.push(newEntry);
     fs.writeFileSync('./data.json', JSON.stringify(db, null, 2));
     res.send(newEntry.AssignedName);
@@ -60,5 +61,5 @@ app.post('/name', async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Web server active at http://localhost:${port}`);
+  console.log(`${renderTime()} Web server active at http://localhost:${port}`);
 });
